@@ -1,0 +1,11 @@
+variable "associate_public_ip_address" {}
+variable "cidr" {}
+variable "environment_type" {}
+variable "instance_type" {}
+variable "key_name" {}
+variable "public_ip" {}
+variable "public_subnet" {}
+variable "region" {}
+variable "source_dest_check" {}
+variable "stack_name" {}
+variable "vpc_id" {}
