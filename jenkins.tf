@@ -1,9 +1,9 @@
-module "bastion" {
-  source                      = "tf_aws_bastion"
+module "jenkins" {
+  source                      = "tf_aws_jenkins"
   associate_public_ip_address = "${var.associate_public_ip_address}"
   cidr                        = "${var.cidr}"
   environment_type            = "${var.environment_type}"
-  instance_type               = "${lookup(var.instance_size, "bastion")}"
+  instance_type               = "${lookup(var.instance_size, "jenkins")}"
   key_name                    = "${var.key_name}"
   public_ip                   = "${var.public_ip}"
   public_subnet               = "${var.public_subnet}"

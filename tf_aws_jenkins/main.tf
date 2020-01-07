@@ -1,4 +1,4 @@
-data "aws_ami" "bastion" {
+data "aws_ami" "jenkins" {
   most_recent      = true
   owners           = ["amazon"]
 
@@ -18,29 +18,28 @@ data "aws_ami" "bastion" {
   }
 }
 
-resource "aws_eip" "bastion-eip" {
+resource "aws_eip" "jenkins-eip" {
   vpc      = true
-  instance = "${aws_instance.bastion.id}"
+  instance = "${aws_instance.jenkins.id}"
 
-  depends_on = ["aws_eip.bastion-eip"]
+  depends_on = ["aws_eip.jenkins-eip"]
 }
 
-resource "aws_instance" "bastion" {
-  ami                         = "${data.aws_ami.bastion.image_id}"
+resource "aws_instance" "jenkins" {
+  ami                         = "${data.aws_ami.jenkins.image_id}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"
-  vpc_security_group_ids      = ["${aws_security_group.bastion.id}"]
+  vpc_security_group_ids      = ["${aws_security_group.jenkins.id}"]
   subnet_id                   = "${var.public_subnet}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
   source_dest_check           = "${var.source_dest_check}"
-  iam_instance_profile        = "${aws_iam_instance_profile.bastion_profile.name}"
+  iam_instance_profile        = "${aws_iam_instance_profile.jenkins_profile.name}"
   user_data                   = "${data.template_file.userdata.rendered}"
 
   tags = {
-    Name        = "tf-${var.stack_name}-bastion"
-    subnet      = "public"
-    role        = "bastion"
-    environment = "${var.environment_type}"
+    Name        = "tf-${var.stack_name}-jenkins"
+    Subnet      = "public"
+    Environment = "${var.environment_type}"
   }
 }
 

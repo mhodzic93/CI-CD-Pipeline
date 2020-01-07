@@ -43,12 +43,9 @@ variable "instance_size" {
   type        = "map"
 
   default = {
-    bastion = "t2.micro"
     jenkins = "t2.medium"
   }
 }
-
-# Bastion Variables
 
 variable "associate_public_ip_address" {
   description = "Sets whether the instance has a public ip address"
