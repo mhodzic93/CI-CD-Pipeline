@@ -2,6 +2,9 @@ variable "associate_public_ip_address" {}
 variable "cidr" {}
 variable "environment_type" {}
 variable "instance_type" {}
+variable "jenkins_email" {}
+variable "jenkins_password" {}
+variable "jenkins_username" {}
 variable "key_name" {}
 variable "public_ip" {}
 variable "public_subnet" {}

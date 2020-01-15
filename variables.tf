@@ -12,6 +12,18 @@ variable "environment_type" {
   description = "Sets the environment being deployed"
 }
 
+variable "jenkins_email" {
+  description = "Sets the email of the Jenkins server"
+}
+
+variable "jenkins_password" {
+  description = "Sets the Jenkins user's password"
+}
+
+variable "jenkins_username" {
+  description = "Sets the Jenkins username"
+}
+
 variable "key_name" {
   description = "Sets the ec2 key pair name used on the ecs host instances"
 }

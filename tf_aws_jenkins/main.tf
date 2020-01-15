@@ -1,6 +1,6 @@
 data "aws_ami" "jenkins" {
-  most_recent      = true
-  owners           = ["amazon"]
+  most_recent = true
+  owners      = ["amazon"]
 
   filter {
     name   = "name"
@@ -45,4 +45,16 @@ resource "aws_instance" "jenkins" {
 
 data "template_file" "userdata" {
   template = "${file("${path.module}/userdata.tpl")}"
+
+  vars {
+    PASSWORD            = "${var.jenkins_password}"
+    USERNAME            = "${var.jenkins_username}"
+    S3_BUCKET           = "${aws_s3_bucket.jenkins.bucket}"
+    PLUGINS_PATH        = "${aws_s3_bucket_object.jenkins_plugins.key}"
+    CSRF_PATH           = "${aws_s3_bucket_object.csrf.key}"
+    DEFAULT_PATH        = "${aws_s3_bucket_object.default.key}"
+    CREATE_USER_PATH    = "${aws_s3_bucket_object.create_user.key}"
+    AGENT_SECURITY_PATH = "${aws_s3_bucket_object.agent_security.key}"
+    JENKINS_EMAIL       = "${var.jenkins_email}"
+  }
 }

@@ -12,7 +12,7 @@ resource "aws_security_group" "jenkins" {
     description = "Allow SSH from specified public IP address"
   }
 
-    ingress {
+  ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
