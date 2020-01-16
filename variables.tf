@@ -44,6 +44,14 @@ variable "stack_name" {
   description = "Sets the name of the stack"
 }
 
+variable "tomcat_password" {
+  description = "Sets the Tomcat user's password"
+}
+
+variable "tomcat_username" {
+  description = "Sets the Tomcat username"
+}
+
 variable "vpc_id" {
   description = "Sets the vpc id that the resources are using"
 }
@@ -56,6 +64,7 @@ variable "instance_size" {
 
   default = {
     jenkins = "t2.medium"
+    tomcat  = "t2.medium"
   }
 }
 

@@ -15,10 +15,11 @@ wget -O /opt/apache-maven-3.6.3-bin.tar.gz https://www-us.apache.org/dist/maven/
 tar -xvzf /opt/apache-maven-3.6.3-bin.tar.gz -C /opt
 mv /opt/apache-maven-3.6.3 /opt/maven
 rm -f /opt/apache-maven-3.6.3-bin.tar.gz
-java_version=$(find /usr/lib/jvm/java-1.8.0-openjdk-1.8* | head -n 1)
+JAVA_VERSION=$(find /usr/lib/jvm/java-1.8.0-openjdk-1.8* | head -n 1)
+M2_HOME=/opt/maven
 
 cat <<EOF >> /etc/profile
-export JAVA_HOME=$java_version
+export JAVA_HOME=$JAVA_VERSION
 export M2_HOME=/opt/maven
 export M2=/opt/maven/bin
 export PATH=\$PATH:\$JAVA_HOME:\$M2:\$M2_HOME
@@ -56,21 +57,35 @@ until wget -O ~/jenkins-cli.jar http://localhost:8080/jnlpJars/jenkins-cli.jar; 
     sleep 5
 done
 
-for path in ${CSRF_PATH} ${DEFAULT_PATH} ${AGENT_SECURITY_PATH} ${CREATE_USER_PATH}
+for path in ${CSRF_PATH} ${DEFAULT_PATH} ${AGENT_SECURITY_PATH} ${CREDS_PATH} ${CREATE_USER_PATH}
 do
     aws s3 cp s3://${S3_BUCKET}/$path ~/$path
 done
 
+aws s3 cp s3://${S3_BUCKET}/jobs /var/lib/jenkins/jobs --recursive
+chown -R jenkins:jenkins /var/lib/jenkins
 PUBLIC_IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 sed -i -e 's|{{USERNAME}}|${USERNAME}|g' \
        -e 's|{{PASSWORD}}|${PASSWORD}|' ~/${CREATE_USER_PATH}
 sed -i -e 's|{{JENKINS_EMAIL}}|${JENKINS_EMAIL}|' \
        -e 's|{{PUBLIC_IP}}|$PUBLIC_IP|' ~/${DEFAULT_PATH}
+sed -i -e 's|{{TOMCAT_USERNAME}}|${TOMCAT_USERNAME}|g' \
+       -e 's|{{TOMCAT_PASSWORD}}|${TOMCAT_PASSWORD}|' ~/${CREDS_PATH}
+sed -i -e 's|{{TOMCAT_IP}}|${TOMCAT_IP}|' /var/lib/jenkins/jobs/Deploy_Tomcat/config.xml
 
-for path in ${CSRF_PATH} ${DEFAULT_PATH} ${AGENT_SECURITY_PATH} ${CREATE_USER_PATH}
+for path in ${CSRF_PATH} ${DEFAULT_PATH} ${AGENT_SECURITY_PATH} ${CREDS_PATH} ${CREATE_USER_PATH}
 do
     java -jar ~/jenkins-cli.jar -s http://localhost:8080/ groovy = < ~/$path
 done
+
+for path in ${CONFIG_PATH} ${GIT_TOOL_PATH} ${MAVEN_PATH}
+do
+    aws s3 cp s3://${S3_BUCKET}/$path /var/lib/jenkins/
+done
+
+sed -i -e "s|{{JAVA_HOME_PATH}}|$JAVA_VERSION|g" /var/lib/${CONFIG_PATH}
+sed -i -e "s|{{M2_HOME_PATH}}|$M2_HOME|g" /var/lib/${MAVEN_PATH}
+chown -R jenkins:jenkins /var/lib/jenkins
 
 java -jar ~/jenkins-cli.jar -s http://localhost:8080/ -auth ${USERNAME}:${PASSWORD} safe-restart
 rm -rf ~/jenkins

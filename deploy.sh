@@ -10,3 +10,6 @@ export AWS_SECRET_ACCESS_KEY=$(aws configure get ${1}.aws_secret_access_key)
 
 echo "Deploying terraform"
 terraform apply plan.out
+
+echo "Uploading Jenkins Jobs to S3"
+aws s3 cp ./scripts/jenkins/jobs/ s3://$(terraform output DEVOPS_BUCKET)/jobs/ --recursive

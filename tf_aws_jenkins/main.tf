@@ -21,8 +21,6 @@ data "aws_ami" "jenkins" {
 resource "aws_eip" "jenkins-eip" {
   vpc      = true
   instance = "${aws_instance.jenkins.id}"
-
-  depends_on = ["aws_eip.jenkins-eip"]
 }
 
 resource "aws_instance" "jenkins" {
@@ -49,12 +47,19 @@ data "template_file" "userdata" {
   vars {
     PASSWORD            = "${var.jenkins_password}"
     USERNAME            = "${var.jenkins_username}"
-    S3_BUCKET           = "${aws_s3_bucket.jenkins.bucket}"
-    PLUGINS_PATH        = "${aws_s3_bucket_object.jenkins_plugins.key}"
-    CSRF_PATH           = "${aws_s3_bucket_object.csrf.key}"
-    DEFAULT_PATH        = "${aws_s3_bucket_object.default.key}"
-    CREATE_USER_PATH    = "${aws_s3_bucket_object.create_user.key}"
-    AGENT_SECURITY_PATH = "${aws_s3_bucket_object.agent_security.key}"
+    S3_BUCKET           = "${var.s3_bucket}"
+    PLUGINS_PATH        = "${var.plugins_path}"
+    CSRF_PATH           = "${var.csrf_path}"
+    DEFAULT_PATH        = "${var.default_path}"
+    CREATE_USER_PATH    = "${var.create_user_path}"
+    AGENT_SECURITY_PATH = "${var.agent_security_path}"
+    CREDS_PATH          = "${var.creds_path}"
     JENKINS_EMAIL       = "${var.jenkins_email}"
+    TOMCAT_IP           = "${var.tomcat_ip}"
+    TOMCAT_PASSWORD     = "${var.tomcat_password}"
+    TOMCAT_USERNAME     = "${var.tomcat_username}"
+    CONFIG_PATH         = "${var.config_path}"
+    GIT_TOOL_PATH       = "${var.git_tool_path}"
+    MAVEN_PATH          = "${var.maven_path}"
   }
 }
