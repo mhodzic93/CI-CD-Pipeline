@@ -77,3 +77,9 @@ variable "source_dest_check" {
   description = "Sets whether the network interface performs source/destination checking"
   default     = false
 }
+
+# S3 Variables
+variable "force_destroy" {
+  description = "Sets whether S3 buckets will be forced destroyed if they contain objects"
+  default     = true
+}

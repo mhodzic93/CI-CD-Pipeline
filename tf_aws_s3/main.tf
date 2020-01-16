@@ -1,6 +1,7 @@
 resource "aws_s3_bucket" "devops" {
-  bucket = "tf-${var.stack_name}-devops-${var.region}"
-  region = "${var.region}"
+  bucket        = "tf-${var.stack_name}-devops-${var.region}"
+  region        = "${var.region}"
+  force_destroy = "${var.force_destroy}"
 }
 
 resource "aws_s3_bucket_object" "jenkins_plugins" {
