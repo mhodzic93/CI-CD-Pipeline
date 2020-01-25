@@ -8,11 +8,36 @@ a Tomcat server using Terraform
 2. Create an IAM user, assign the user `Programmatic access`, attach the `AdministratorAccess` IAM policy to the user, and 
 save the access key ID and secret access key ID.
 
-3. Install the aws cli by running the following command:
+3. Install the pre-reqs by running the following commands:
+
+##### Mac OS:
 ```
 curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
 unzip awscli-bundle.zip
 sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+
+# Install git
+git --version
+if [ "$?" -eq 0 ]; then
+  echo "Git is already installed, continuing..."
+  exit 0
+else
+  echo "Git not found, installing..."
+  brew install git
+fi
+
+# Install brew
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+```
+
+##### Linux(Ubuntu):
+```
+apt update -y
+apt install -y curl python git
+curl -O https://bootstrap.pypa.io/get-pip.py
+python get-pip.py --user
+apt install -y python-pip awscli
 ```
 
 4. Configure your aws profile locally by running the below command and filling out the
@@ -22,7 +47,10 @@ parameters using the keys saved from step 2:
 5. Import a key pair to the EC2 service in the region you will be deploying in or create
 a key pair, if you don't already have an ssh key.
 
-6. Copy the `manifest.tfvars.tpl` file to the root directory and name it `manifest.tfvars`.
+6. Clone the repository locally, by running:
+`git clone https://github.com/mhodzic93/CI-CD-Pipeline.git`
+
+7. Copy the `manifest.tfvars.tpl` file to the root directory and name it `manifest.tfvars`.
 If you're not sure what the values should look like, view the `manifest.tfvars.example` file.
 Update the following variables in the `manifest.tfvars` file:
 ```
@@ -43,20 +71,21 @@ vpc_id - set this to the default vpc id in region you are deploying in
 
 ```
 
-7. Mac users will need to install brew prior to running the requirements.sh script using the following command:
+
+7. Run the requirements install script to install the required tools:
+##### MacOS:
 ```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+chmod +x ./scripts/mac_requirements.sh
+./scripts/mac_requirements.sh
 ```
 
-8. Run the requirements install script to install the required tools on Mac OS:
+##### Linux(Ubuntu):
 ```
-chmod +x requirements.sh
-./requirements.sh
+chmod +x ./scripts/linux_requirements.sh
+./scripts/linux_requirements.sh
 ```
 
 # Running Terraform
-Clone the repository locally, by running:
-`git clone https://github.com/mhodzic93/CI-CD-Pipeline.git`
 
 Replace `<path_to_variables_file>` with the path to the `manifest.tfvars` file.
 
